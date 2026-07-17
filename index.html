@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sürpriiiz! 🦍</title>
+    <title>Sürpriz! 🦍</title>
     <style>
         body {
             margin: 0;
@@ -12,134 +12,94 @@
             justify-content: center;
             height: 100vh;
             background-color: #ffeef2;
-            font-family: 'Segoe UI', sans-serif;
+            font-family: sans-serif;
+            overflow: hidden;
         }
 
         .envelope-wrapper {
             position: relative;
             cursor: pointer;
-            perspective: 1000px;
+            width: 300px;
+            height: 200px;
         }
 
+        /* Zarfın gövdesi (arkada sabit) */
         .envelope {
-            width: 250px;
-            height: 150px;
+            position: absolute;
+            bottom: 0;
+            width: 300px;
+            height: 180px;
             background-color: #f47a94;
-            position: relative;
-            z-index: 2;
-            transition: transform 0.6s;
-            transform-style: preserve-3d;
             border-radius: 0 0 10px 10px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            z-index: 2;
         }
 
-        /* Zarfın Kapağı */
-        .flap {
-            width: 100%;
-            height: 100%;
-            background-color: #d85473;
-            position: absolute;
-            top: 0;
-            left: 0;
-            border-radius: 10px 10px 0 0;
-            transform-origin: top;
-            transition: transform 0.6s, z-index 0.6s;
-            z-index: 3;
-            backface-visibility: hidden;
-        }
-
+        /* Mektup Kağıdı (içinde fotoğraf var) */
         .letter {
-            width: 230px;
-            height: 130px;
-            background-color: white;
             position: absolute;
-            top: 10px;
-            left: 10px;
-            border-radius: 5px;
+            bottom: 0;
+            left: 25px;
+            width: 250px;
+            height: 160px;
+            background-color: white;
             z-index: 1;
-            transition: transform 0.6s;
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            padding: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 10px;
-            box-sizing: border-box;
-            border: 2px solid #ff4d6d;
+            border-radius: 5px;
         }
 
-        /* Mektubun İçeriği (SVG ile Çizilmiş Milk & Mocha) */
-        .letter-content {
+        /* Fotoğrafın boyutu */
+        .letter img {
             width: 100%;
             height: 100%;
+            object-fit: contain;
         }
 
-        /* TIKLANDIĞINDA ÇALIŞACAK AKTİF DURUMLAR */
-        .envelope-wrapper.open .flap {
+        /* Zarfın kapağı */
+        .flap {
+            position: absolute;
+            top: 0;
+            width: 300px;
+            height: 150px;
+            background-color: #d85473;
+            clip-path: polygon(0 0, 100% 0, 50% 100%);
+            z-index: 3;
+            transform-origin: top;
+            transition: transform 0.6s;
+        }
+
+        /* Tıklandığında çalışacak animasyon */
+        .open .flap {
             transform: rotateX(180deg);
-            z-index: 1;
         }
-
-        .envelope-wrapper.open .letter {
-            transform: translateY(-80px);
-            z-index: 2;
+        
+        .open .letter {
+            transform: translateY(-150px); /* Mektup yukarı fırlar */
         }
-
-        /* Fotoğraf Alanı */
-        .card {
-            background: white;
-            padding: 15px;
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
-            text-align: center;
-            max-width: 90%;
-            margin-bottom: 20px;
+        
+        .hint {
+            position: absolute;
+            bottom: 50px;
+            color: #d85473;
+            font-weight: bold;
         }
-
-        .card img {
-            width: 100%;
-            max-width: 350px;
-            border-radius: 10px;
-            display: block;
-        }
-
     </style>
 </head>
 <body>
 
-    <div>
-        <div class="card">
-            <!-- Aynı klasördeki fotoğraf -->
-            <img src="goril.jpg" alt="Saygılar">
-        </div>
+    <div class="hint">Tıkla ve sürprizine bak ✨</div>
 
-        <div class="envelope-wrapper" id="envelopeContainer">
-            <div class="flap"></div>
-            <div class="letter">
-                <div class="letter-content">
-                    <!-- Milk & Mocha Çizimi -->
-                    <svg viewBox="0 0 100 60">
-                        <circle cx="30" cy="30" r="10" fill="#ffffff" stroke="#1c110b" stroke-width="1.5"/>
-                        <circle cx="70" cy="30" r="10" fill="#b08362" stroke="#1c110b" stroke-width="1.5"/>
-                        <circle cx="30" cy="30" r="1.5" fill="#1c110b"/>
-                        <circle cx="70" cy="30" r="1.5" fill="#1c110b"/>
-                        <ellipse cx="30" cy="35" rx="3" ry="2" fill="#fcaec1"/>
-                        <ellipse cx="70" cy="35" rx="3" ry="2" fill="#fcaec1"/>
-                        <path d="M 30 38 Q 32 40 34 38 M 70 38 Q 72 40 74 38" fill="none" stroke="#1c110b" stroke-width="1"/>
-                        <path d="M 45 30 Q 50 35 55 30 L 50 25 Z" fill="#ff4d6d"/>
-                        <text x="50" y="55" font-family="Arial" font-size="6" fill="#1c110b" text-anchor="middle">İyi ki varsın!</text>
-                    </svg>
-                </div>
-            </div>
-            <div class="envelope"></div>
+    <div class="envelope-wrapper" id="container" onclick="this.classList.toggle('open')">
+        <div class="flap"></div>
+        <div class="letter">
+            <!-- BURAYA DİKKAT: Fotoğrafın adı mutlaka goril.jpg olmalı -->
+            <img src="goril.jpg" alt="Sürpriz">
         </div>
+        <div class="envelope"></div>
     </div>
-
-    <script>
-        const container = document.getElementById('envelopeContainer');
-        container.addEventListener('click', () => {
-            container.classList.toggle('open');
-        });
-    </script>
 
 </body>
 </html>
-
