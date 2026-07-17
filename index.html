@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sürpriz! ✉️🦍</title>
+    <title>Sana Bir Mesajım Var ✉️</title>
     <style>
         * {
             box-sizing: border-box;
@@ -16,15 +16,19 @@
             align-items: center;
             height: 100vh;
             background-color: #ffeef2;
-            font-family: 'Segoe UI', sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             overflow: hidden;
         }
 
         .envelope-wrapper {
             position: relative;
             cursor: pointer;
-            transform: translateY(40px);
+            transform: translateY(20px);
             transition: transform 0.3s ease;
+        }
+
+        .envelope-wrapper:hover {
+            transform: translateY(10px);
         }
 
         /* Zarfın Ana Gövdesi */
@@ -36,10 +40,9 @@
             border-bottom-left-radius: 10px;
             border-bottom-right-radius: 10px;
             box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
-            z-index: 2;
         }
 
-        /* Zarfın Ön Katları (Eski koddaki o gerçekçi üçgenler) */
+        /* Zarfın Ön Katları (Sol, Sağ ve Alt Üçgenler) */
         .envelope::before {
             content: '';
             position: absolute;
@@ -95,7 +98,7 @@
             z-index: 5;
         }
 
-        /* İçinden Goril Çıkacak Mektup Kağıdı */
+        /* İçindeki Mektup Kağıdı (Fotoğraf Alanı) */
         .letter {
             position: absolute;
             bottom: 5px;
@@ -104,16 +107,17 @@
             height: 160px;
             background-color: #ffffff;
             border-radius: 8px;
-            padding: 8px;
+            padding: 8px; /* Görselin tam sığması için padding düşürüldü */
+            text-align: center;
             box-shadow: 0 0 10px rgba(0,0,0,0.05);
             transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            z-index: 1;
+            z-index: 2;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        /* Mektubun içindeki goril fotoğrafı */
+        /* Mektubun içindeki goril fotoğrafı ayarı */
         .letter img {
             width: 100%;
             height: 100%;
@@ -139,14 +143,38 @@
         }
 
         .envelope-wrapper.open .letter {
-            transform: translateY(-130px); /* Mektup ve goril yukarı fırlıyor */
+            transform: translateY(-110px); /* Gorilin tam çıkması için biraz daha yukarı kaydırıldı */
             z-index: 2;
-            height: 180px;
+            height: 190px;
         }
 
         .envelope-wrapper.open .heart-lock {
             opacity: 0;
             pointer-events: none;
+        }
+
+        /* Uçuşan Kalp Animasyonları */
+        .floating-heart {
+            position: absolute;
+            color: #ff4d6d;
+            font-size: 24px;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translate(0, 0) scale(0.5);
+                opacity: 0;
+            }
+            20% {
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--x), var(--y)) scale(1.2);
+                opacity: 0;
+            }
         }
 
         .hint {
@@ -157,22 +185,71 @@
             color: #e05a7b;
             font-size: 14px;
             font-weight: bold;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
         }
     </style>
 </head>
 <body>
 
-    <div class="envelope-wrapper" id="envelopeContainer" onclick="this.classList.toggle('open')">
+    <div class="envelope-wrapper" id="envelopeContainer">
         <div class="top-flap"></div>
         <div class="letter">
-            <!-- Eski koddaki mektubun içine gorili koyduk -->
+            <!-- Yazılar kalktı, yerine tam senin istediğin fotoğraf geldi -->
             <img src="goril.jpg" alt="Sürpriz">
         </div>
         <div class="envelope"></div>
         <div class="front-flap"></div>
         <div class="heart-lock">❤️</div>
-        <div class="hint">Açmak için zarfa tıkla ✨</div>
+        <div class="hint" id="hintText">Açmak için zarfa tıkla ✨</div>
     </div>
+
+    <script>
+        const container = document.getElementById('envelopeContainer');
+        const hintText = document.getElementById('hintText');
+
+        container.addEventListener('click', () => {
+            container.classList.toggle('open');
+            
+            if(container.classList.contains('open')) {
+                hintText.style.display = 'none';
+                createHearts();
+            } else {
+                hintText.style.display = 'block';
+            }
+        });
+
+        function createHearts() {
+            for (let i = 0; i < 12; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'floating-heart';
+                heart.innerText = ['💖', '❤️', '💕', '🌸'][Math.floor(Math.random() * 4)];
+                
+                const x = (Math.random() * 200 - 100) + 'px';
+                const y = (Math.random() * -150 - 50) + 'px';
+                
+                heart.style.setProperty('--x', x);
+                heart.style.setProperty('--y', y);
+                
+                heart.style.left = '130px';
+                heart.style.top = '70px';
+                
+                heart.style.animation = `floatUp ${1 + Math.random() * 1}s ease-out forwards`;
+                heart.style.animationDelay = (Math.random() * 0.2) + 's';
+                
+                container.appendChild(heart);
+                
+                setTimeout(() => {
+                    heart.remove();
+                }, 2000);
+            }
+        }
+    </script>
 
 </body>
 </html>
